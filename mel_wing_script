@@ -1,0 +1,35 @@
+library(patternize)
+library(recolorize)
+
+---
+#I have all files within the same working directory for this small test
+
+IDlist<-c("1695","1699","1712","1746")
+
+# make list with images
+imageList <- makeList(IDlist, type = "image",
+                      prepath = "./",
+                      extension = "_cropped_D.tif")
+
+# make list with landmarks
+landmarkList <- makeList(IDlist,
+                         type = "landmark",
+                         prepath = "./",
+                         extension = "_coord_D.txt")
+
+#rename individuals so names are not numeric
+names(imageList)<-c("m1695","m1699","m1712","m1746")
+names(landmarkList)<-c("m1695","m1699","m1712","m1746")
+
+# Set target as first individual (also has outline coordinates)
+target <- landmarkList[["m1695"]]
+
+# Set up mask using first individual's outline
+mask <- read.table("1695_outline.txt", header = FALSE)
+
+### Alignment ###
+imageList_aligned <- alignLan(imageList, landmarkList, transformRef = target, 
+                              adjustCoords = TRUE,
+                              plotTransformed = T, 
+                              resampleFactor = 3,  
+                              inverse = F)
